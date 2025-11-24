@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch('http://localhost:3000/api/invoice/history', {
+    const res = await fetch('https://invoice-app.onrender.com/api/invoice/history', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
