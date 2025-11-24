@@ -1,3 +1,5 @@
+const BACKEND_URL = "https://zsti2.onrender.com";
+
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -6,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch('https://invoice-app.onrender.com/api/invoice/history', {
+    const res = await fetch(`${BACKEND_URL}/api/invoice/history`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
