@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rejestracja - Invoice App</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+  <h1>Rejestracja</h1>
+  <div class="card">
+    <form id="registerForm">
+      <div class="form-group">
+        <label>Imię</label>
+        <input type="text" id="firstName" required>
+      </div>
+      <div class="form-group">
+        <label>Nazwisko</label>
+        <input type="text" id="lastName" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="registerEmail" required>
+      </div>
+      <div class="form-group">
+        <label>Hasło</label>
+        <input type="password" id="registerPassword" required>
+      </div>
+      <div class="form-group">
+        <label>Powtórz hasło</label>
+        <input type="password" id="registerConfirm" required>
+      </div>
+      <button type="submit" class="btn">Zarejestruj się</button>
+      <p>Masz już konto? <a href="index.html">Zaloguj się</a></p>
+    </form>
+  </div>
+</div>
+<script src="js/auth.js"></script>
+</body>
+</html>
