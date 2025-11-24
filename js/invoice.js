@@ -93,7 +93,7 @@ document.getElementById("invoiceForm").addEventListener("submit", function(e){
   // Wysyłka na backend
   pdf.getBase64(async function(data){
     try {
-      const res = await fetch('http://localhost:3000/api/invoice',{
+      const res = await fetch('https://invoice-app.onrender.com/api/invoice',{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
