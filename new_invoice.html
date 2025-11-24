@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nowa Faktura - Invoice App</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Nowa Faktura</h1>
+  <div class="card">
+    <form id="invoiceForm">
+      <h3>Informacje ogólne</h3>
+      <div class="form-group">
+        <label>Numer faktury</label>
+        <input type="text" id="invoice_number" value="01/11/2025" required>
+      </div>
+      <div class="form-group">
+        <label>Data wystawienia</label>
+        <input type="date" id="issue_date" value="2025-11-23" required>
+      </div>
+      <div class="form-group">
+        <label>Data sprzedaży</label>
+        <input type="date" id="sale_date" value="2025-11-23" required>
+      </div>
+      <div class="form-group">
+        <label>Miejsce wystawienia</label>
+        <input type="text" id="place" value="Miasto" required>
+      </div>
+
+      <h3>Sprzedawca</h3>
+      <div class="form-group"><label>Nazwa firmy</label><input type="text" id="seller_company" required></div>
+      <div class="form-group"><label>NIP</label><input type="text" id="seller_nip" required></div>
+      <div class="form-group"><label>Ulica</label><input type="text" id="seller_street" required></div>
+      <div class="form-group"><label>Kod pocztowy</label><input type="text" id="seller_postal" required></div>
+      <div class="form-group"><label>Miasto</label><input type="text" id="seller_city" required></div>
+      <div class="form-group"><label>Osoba</label><input type="text" id="seller_person"></div>
+
+      <h3>Nabywca</h3>
+      <div class="form-group"><label>Nazwa firmy</label><input type="text" id="buyer_company" required></div>
+      <div class="form-group"><label>NIP</label><input type="text" id="buyer_nip" required></div>
+      <div class="form-group"><label>Ulica</label><input type="text" id="buyer_street" required></div>
+      <div class="form-group"><label>Kod pocztowy</label><input type="text" id="buyer_postal" required></div>
+      <div class="form-group"><label>Miasto</label><input type="text" id="buyer_city" required></div>
+      <div class="form-group"><label>Osoba</label><input type="text" id="buyer_person"></div>
+
+      <h3>Pozycje</h3>
+      <div class="table-container">
+        <table id="itemsTable">
+          <thead>
+            <tr>
+              <th>Nazwa</th>
+              <th>Jm.</th>
+              <th>Ilość</th>
+              <th>Cena netto</th>
+              <th>VAT %</th>
+              <th>Usuń</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" class="item_name" required></td>
+              <td><input type="text" class="item_unit" value="szt." required></td>
+              <td><input type="number" class="item_qty" value="1" min="0" required></td>
+              <td><input type="number" class="item_price" value="0" min="0" required></td>
+              <td><input type="number" class="item_vat" value="23" min="0" required></td>
+              <td><button type="button" class="btn removeItem">X</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" id="addItem" class="btn">Dodaj pozycję</button>
+      </div>
+
+      <h3>Uwagi</h3>
+      <div class="form-group">
+        <label>Uwagi</label>
+        <input type="text" id="notes">
+      </div>
+
+      <button type="submit" class="btn">Generuj PDF i wyślij</button>
+    </form>
+  </div>
+</div>
+<script src="js/invoice.js"></script>
+</body>
+</html>
