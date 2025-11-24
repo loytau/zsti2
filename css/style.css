@@ -1,0 +1,109 @@
+/* Reset i podstawowe style */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f5f6fa;
+  padding: 40px;
+}
+
+/* Kontener centralny */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Nagłówki */
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Karta formularza */
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* Formularze */
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #444;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #4c8bf5;
+  outline: none;
+  box-shadow: 0 0 4px rgba(76,139,245,0.4);
+}
+
+/* Przycisk */
+.btn {
+  width: 100%;
+  background: #4c8bf5;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background: #3b73d9;
+}
+
+/* Tabela faktur i pozycji */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+table th {
+  background: #e6f0ff;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Dodatkowe odstępy dla tabeli w formularzu faktury */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
