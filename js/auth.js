@@ -4,7 +4,7 @@ document.getElementById("loginForm")?.addEventListener("submit", async e => {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
 
-  const res = await fetch('http://localhost:3000/api/login', {
+  const res = await fetch('https://invoice-app.onrender.com/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -33,7 +33,7 @@ document.getElementById("registerForm")?.addEventListener("submit", async e => {
     return;
   }
 
-  const res = await fetch('http://localhost:3000/api/register', {
+  const res = await fetch('https://invoice-app.onrender.com/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ firstName, lastName, email, password })
