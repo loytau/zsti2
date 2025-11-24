@@ -1,3 +1,5 @@
+const BACKEND_URL = "https://zsti2.onrender.com";
+
 document.getElementById("addItem").addEventListener("click", function(){
   const tbody = document.querySelector("#itemsTable tbody");
   const row = document.createElement("tr");
@@ -58,7 +60,6 @@ document.getElementById("invoiceForm").addEventListener("submit", function(e){
     });
   });
 
-  // Przygotowanie PDF
   const body = invoice.items.map((i,index)=>[
     index+1, i.name, i.unit, i.quantity, i.price_net.toFixed(2), 
     (i.quantity*i.price_net).toFixed(2), i.vat+"%", 
@@ -90,10 +91,9 @@ document.getElementById("invoiceForm").addEventListener("submit", function(e){
   const pdf = pdfMake.createPdf(docDefinition);
   pdf.download(`faktura_${invoice.number}.pdf`);
 
-  // Wysyłka na backend
   pdf.getBase64(async function(data){
     try {
-      const res = await fetch('https://invoice-app.onrender.com/api/invoice',{
+      const res = await fetch(`${BACKEND_URL}/api/invoice`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
