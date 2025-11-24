@@ -8,7 +8,13 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const SECRET_KEY = "supersecretkey";
 
-app.use(cors());
+// CORS tylko dla frontendu na GitHub Pages
+app.use(cors({
+  origin: "https://loytau.github.io",  // <- Twój frontend URL
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  credentials: true
+}));
+
 app.use(bodyParser.json());
 
 const db = new sqlite3.Database('./database.sqlite');
