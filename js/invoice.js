@@ -77,6 +77,8 @@ async function fillBuyerOrSeller(type) {
     const streetField = document.querySelector(`#${type}_street`);
     const postalField = document.querySelector(`#${type}_postal`);
     const cityField = document.querySelector(`#${type}_city`);
+    console.log("Listener aktywowany dla:", type, "NIP:", nipField.value);
+
 
     let nip = nipField.value.replace(/\D/g, "");
 
