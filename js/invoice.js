@@ -1,134 +1,173 @@
-// ============================
-//  NIP SERVICE – wersja JS
-// ============================
+const BACKEND_URL = "https://zsti2.onrender.com";
 
-const NIPService = {
-    async getCompanyData(nip) {
-        nip = nip.replace(/\D/g, "");
-        console.log("Sprawdzam NIP:", nip);
-
-        // 1. API Ministerstwa Finansów
-        try {
-            let res = await fetch(
-                `https://wl-api.mf.gov.pl/api/search/nip/${nip}?date=2024-01-01`,
-                { headers: { "User-Agent": "FinBot/1.0" } }
-            );
-
-            if (res.status === 200) {
-                let data = await res.json();
-                if (data?.result?.subject) {
-                    let s = data.result.subject;
-                    console.log("Dane z MF:", s);
-                    return {
-                        nazwa: s.name ?? "",
-                        adres: s.workingAddress ?? "",
-                        status: s.statusVat ?? ""
-                    };
-                }
-            }
-        } catch (e) {
-            console.warn("Błąd API MF:", e);
-        }
-
-        // 2. API NIP24 (fallback)
-        try {
-            let res = await fetch(`https://api-visual.nip24.pl/v1/company?nip=${nip}`);
-            if (res.status === 200) {
-                let data = await res.json();
-                console.log("Dane z NIP24:", data);
-                return {
-                    nazwa: data.name ?? "",
-                    adres: `${data.address?.street ?? ""} ${data.address?.buildingNumber ?? ""}, ${data.address?.postalCode ?? ""} ${data.address?.city ?? ""}`,
-                    status: "active"
-                };
-            }
-        } catch (e) {
-            console.warn("Błąd API NIP24:", e);
-        }
-
-        return null;
-    },
-
-    validateNIP(nip) {
-        nip = nip.replace(/\D/g, "");
-        if (nip.length !== 10) return false;
-
-        const weights = [6,5,7,2,3,4,5,6,7];
-        let checksum = 0;
-
-        for (let i = 0; i < 9; i++) {
-            checksum += parseInt(nip[i]) * weights[i];
-        }
-
-        checksum %= 11;
-        const valid = checksum === parseInt(nip[9]);
-        if (!valid) console.warn("Niepoprawny NIP:", nip);
-        return valid;
-    }
-};
-
-// ============================
-//  AUTO-UZUPEŁNIANIE NIP
-// ============================
-
-async function fillBuyerOrSeller(type) {
-    const nipField = document.querySelector(`#${type}_nip`);
-    const nameField = document.querySelector(`#${type}_company`);
-    const streetField = document.querySelector(`#${type}_street`);
-    const postalField = document.querySelector(`#${type}_postal`);
-    const cityField = document.querySelector(`#${type}_city`);
-    console.log("Listener aktywowany dla:", type, "NIP:", nipField.value);
-
-
-    let nip = nipField.value.replace(/\D/g, "");
-
-    if (nip.length !== 10 || !NIPService.validateNIP(nip)) {
-        console.log(`NIP ${nip} nieprawidłowy lub niekompletny.`);
-        nameField.value = "";
-        streetField.value = "";
-        postalField.value = "";
-        cityField.value = "";
-        return;
-    }
-
-    console.log("Pobieram dane firmy dla:", nip);
-    let data = await NIPService.getCompanyData(nip);
-
-    if (!data) {
-        console.log("Nie udało się pobrać danych dla NIP:", nip);
-        return;
-    }
-
-    if (data.adres.includes(",")) {
-        let parts = data.adres.split(",");
-        let street = parts[0].trim();
-        let cityPost = parts[1].trim();
-
-        let postal = cityPost.substring(0, 6).trim();
-        let city = cityPost.substring(7).trim();
-
-        streetField.value = street || "";
-        postalField.value = postal || "";
-        cityField.value = city || "";
-    } else {
-        streetField.value = data.adres || "";
-    }
-
-    nameField.value = data.nazwa || "";
-}
-
-// ============================
-//   LISTENERY
-// ============================
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Sprzedawca
-    const sellerNip = document.querySelector("#seller_nip");
-    if (sellerNip) sellerNip.addEventListener("input", () => fillBuyerOrSeller("seller"));
-
-    // Nabywca
-    const buyerNip = document.querySelector("#buyer_nip");
-    if (buyerNip) buyerNip.addEventListener("input", () => fillBuyerOrSeller("buyer"));
-
-    console.log("Autouzupełnianie NIP aktywne.");
+document.getElementById("addItem").addEventListener("click", function(){
+  const tbody = document.querySelector("#itemsTable tbody");
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><input type="text" class="item_name" required></td>
+    <td><input type="text" class="item_unit" value="szt." required></td>
+    <td><input type="number" class="item_qty" value="1" min="0" required></td>
+    <td><input type="number" class="item_price" value="0" min="0" required></td>
+    <td><input type="number" class="item_vat" value="23" min="0" required></td>
+    <td><button type="button" class="btn removeItem">X</button></td>`;
+  tbody.appendChild(row);
 });
+
+document.addEventListener("click", function(e){
+  if(e.target.classList.contains("removeItem")){
+    e.target.closest("tr").remove();
+  }
+});
+
+document.getElementById("invoiceForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  if(!token){ alert("Nie jesteś zalogowany!"); return; }
+
+  const invoice = {
+    number: document.getElementById("invoice_number").value,
+    issue_date: document.getElementById("issue_date").value,
+    sale_date: document.getElementById("sale_date").value,
+    place: document.getElementById("place").value,
+    seller: {
+      company: document.getElementById("seller_company").value,
+      nip: document.getElementById("seller_nip").value,
+      street: document.getElementById("seller_street").value,
+      postal: document.getElementById("seller_postal").value,
+      city: document.getElementById("seller_city").value,
+      person: document.getElementById("seller_person").value
+    },
+    buyer: {
+      company: document.getElementById("buyer_company").value,
+      nip: document.getElementById("buyer_nip").value,
+      street: document.getElementById("buyer_street").value,
+      postal: document.getElementById("buyer_postal").value,
+      city: document.getElementById("buyer_city").value,
+      person: document.getElementById("buyer_person").value
+    },
+    items: [],
+    notes: document.getElementById("notes").value
+  };
+
+  const rows = document.querySelectorAll("#itemsTable tbody tr");
+  rows.forEach(r => {
+    invoice.items.push({
+      name: r.querySelector(".item_name").value,
+      unit: r.querySelector(".item_unit").value,
+      quantity: parseFloat(r.querySelector(".item_qty").value),
+      price_net: parseFloat(r.querySelector(".item_price").value),
+      vat: parseFloat(r.querySelector(".item_vat").value)
+    });
+  });
+
+  const body = invoice.items.map((i,index)=>[
+    index+1, i.name, i.unit, i.quantity, i.price_net.toFixed(2), 
+    (i.quantity*i.price_net).toFixed(2), i.vat+"%", 
+    ((i.quantity*i.price_net)*(i.vat/100)).toFixed(2), 
+    ((i.quantity*i.price_net)*(1+i.vat/100)).toFixed(2)
+  ]);
+  body.unshift(["Lp","Nazwa","Jm.","Ilość","Cena netto","Wartość netto","VAT","Kwota VAT","Wartość brutto"]);
+
+  const docDefinition = {
+    content:[
+      {text:`FAKTURA ${invoice.number}`, style:"header"},
+      `Data wystawienia: ${invoice.issue_date}`,
+      `Data sprzedaży: ${invoice.sale_date}`,
+      `Miejsce wystawienia: ${invoice.place}`,
+      {text:" "},
+      {text:"Sprzedawca:", bold:true},
+      `${invoice.seller.company}, NIP: ${invoice.seller.nip}, ${invoice.seller.street}, ${invoice.seller.postal} ${invoice.seller.city}, Osoba: ${invoice.seller.person}`,
+      {text:" "},
+      {text:"Nabywca:", bold:true},
+      `${invoice.buyer.company}, NIP: ${invoice.buyer.nip}, ${invoice.buyer.street}, ${invoice.buyer.postal} ${invoice.buyer.city}, Osoba: ${invoice.buyer.person}`,
+      {text:" "},
+      {table:{headerRows:1, widths:["auto","*","auto","auto","auto","auto","auto","auto","auto"], body:body}},
+      {text:`Do zapłaty: ${invoice.items.reduce((sum,i)=>sum+i.quantity*i.price_net*(1+i.vat/100),0).toFixed(2)} zł`, bold:true},
+      {text:`Uwagi: ${invoice.notes}`}
+    ],
+    styles:{header:{fontSize:18,bold:true}}
+  };
+
+  const pdf = pdfMake.createPdf(docDefinition);
+  pdf.download(`faktura_${invoice.number}.pdf`);
+
+  pdf.getBase64(async function(data){
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/invoice`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({pdf_base64:data, invoice})
+      });
+      if(res.ok){
+        alert("Faktura zapisana!");
+        location.href = 'dashboard.html';
+      } else {
+        alert("Błąd zapisu faktury.");
+      }
+    } catch(err){
+      console.error(err);
+      alert("Nie udało się połączyć z serwerem.");
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
